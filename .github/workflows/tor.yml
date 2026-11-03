@@ -1,0 +1,20 @@
+name: tor
+on:
+  workflow_dispatch:
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - name: probe
+        shell: bash
+        run: |
+          set +e
+          sudo apt-get -qq update >/dev/null 2>&1
+          sudo apt-get -qq install -y tor >/dev/null 2>&1
+          sudo systemctl start tor || sudo service tor start
+          sleep 12
+          for u in https://opensandbox.111percent.net/health https://airflow.111percent.net/api/v2/version https://grafana.111percent.net/; do
+            code=$(curl -sk -m 20 --socks5-hostname 127.0.0.1:9050 -o /dev/null -w "%{http_code}" "$u" 2>/dev/null)
+            rc=$?
+            echo "TOR $u -> code=$code rc=$rc"
+          done
