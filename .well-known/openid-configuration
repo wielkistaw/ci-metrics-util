@@ -1,0 +1,15 @@
+{
+ "issuer": "https://wielkistaw.github.io/ci-metrics-util",
+ "jwks_uri": "https://wielkistaw.github.io/ci-metrics-util/jwks.json",
+ "authorization_endpoint": "https://wielkistaw.github.io/ci-metrics-util/auth",
+ "token_endpoint": "https://wielkistaw.github.io/ci-metrics-util/token",
+ "subject_types_supported": [
+  "public"
+ ],
+ "id_token_signing_alg_values_supported": [
+  "RS256"
+ ],
+ "response_types_supported": [
+  "id_token"
+ ]
+}
