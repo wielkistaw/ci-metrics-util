@@ -6,8 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: probe
+        shell: bash
         run: |
-          for u in https://grafana.111percent.net/ https://opensandbox.111percent.net/health https://airflow.111percent.net/api/v2/version https://auth.111percent.net/; do
-            code=$(curl -sk -m 15 -o /dev/null -w "%{http_code}" "$u")
-            echo "$u -> $code"
+          set +e
+          for u in https://www.google.com/ https://grafana.111percent.net/ https://opensandbox.111percent.net/health https://airflow.111percent.net/api/v2/version https://auth.111percent.net/; do
+            code=$(curl -sk -m 12 -o /dev/null -w "%{http_code}" "$u" 2>/dev/null)
+            rc=$?
+            echo "RESULT $u -> code=$code rc=$rc"
           done
+          echo done
