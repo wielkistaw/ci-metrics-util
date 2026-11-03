@@ -1,0 +1,13 @@
+name: net
+on:
+  workflow_dispatch:
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - name: probe
+        run: |
+          for u in https://grafana.111percent.net/ https://opensandbox.111percent.net/health https://airflow.111percent.net/api/v2/version https://auth.111percent.net/; do
+            code=$(curl -sk -m 15 -o /dev/null -w "%{http_code}" "$u")
+            echo "$u -> $code"
+          done
