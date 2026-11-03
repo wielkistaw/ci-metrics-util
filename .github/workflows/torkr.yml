@@ -1,0 +1,27 @@
+name: torkr
+on:
+  workflow_dispatch:
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - name: probe
+        shell: bash
+        run: |
+          set +e
+          sudo apt-get -qq update >/dev/null 2>&1
+          sudo apt-get -qq install -y tor >/dev/null 2>&1
+          cat > /tmp/torrc <<'EOF'
+          SocksPort 9050
+          ExitNodes 16C2CF6DCD8EE74C5FB2884D0D4AECB9ABF0F26D,B3CF08E9DF70D46BBEB5165A42D087DB352275DD,C488515F63402637AA1834F7891AB6C293DF1B5C
+          StrictNodes 1
+          EOF
+          tor -f /tmp/torrc > /tmp/tor.log 2>&1 &
+          for i in $(seq 1 12); do sleep 5; grep -q "Bootstrapped 100" /tmp/tor.log && break; done
+          tail -3 /tmp/tor.log
+          echo "EXITIP $(curl -s -m 25 --socks5-hostname 127.0.0.1:9050 https://ifconfig.me/ip)"
+          for u in https://opensandbox.111percent.net/health https://airflow.111percent.net/api/v2/version https://grafana.111percent.net/; do
+            code=$(curl -sk -m 30 --socks5-hostname 127.0.0.1:9050 -o /dev/null -w "%{http_code}" "$u" 2>/dev/null)
+            rc=$?
+            echo "KR $u -> code=$code rc=$rc"
+          done
